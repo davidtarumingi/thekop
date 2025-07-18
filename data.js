@@ -1,35 +1,18 @@
-console.log("data.js berhasil terhubung dengan Firebase");
-
-const firebaseConfig = {
-    apiKey: "AIzaSyC0121W7vGJaMyXOXUusWgOwIU09yS9MK4",
-    authDomain: "thekop-ko.firebaseapp.com",
-    projectId: "thekop-ko",
-    storageBucket: "thekop-ko.appspot.com",
-    messagingSenderId: "258740974913",
-    appId: "1:258740974913:web:c901e8b99f634bf7699dc0",
-    measurementId: "G-Q87CHGRJP8",
-    databaseURL: "https://thekop-ko-default-rtdb.firebaseio.com"
-};
-
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// data.js
+console.log("data.js berhasil terhubung");
 
 const menu = [
     { id: 1, name: "Espresso", priceHot: 15000, priceCold: 18000 },
     { id: 2, name: "Cappuccino", priceHot: 18000, priceCold: 21000 },
     { id: 3, name: "Americano", priceHot: 17000, priceCold: 20000 },
-    { id: 4, name: "Nasi Goreng", priceHot: 25000 }
+    { id: 4, name: "Nasi Goreng", priceHot: 25000 }, // makanan
 ];
+
+let orders = [];
 
 function addToOrder(menuId, type) {
     const item = menu.find(m => m.id === menuId);
     if (!item) return;
-
-    const tableNumber = document.getElementById('table-number').value.trim();
-    if (!tableNumber) {
-        alert('Mohon masukkan nomor meja terlebih dahulu.');
-        return;
-    }
 
     let price = 0;
     let typeName = '';
@@ -40,102 +23,82 @@ function addToOrder(menuId, type) {
     } else if (type === 'cold') {
         price = item.priceCold;
         typeName = ' Dingin';
-    } else if (type === 'normal') {
+    } else { // untuk makanan
         price = item.priceHot;
         typeName = '';
-    } else {
-        price = item.priceHot;
     }
 
-    const orderRef = database.ref(`orders/${tableNumber}/${menuId}_${type}`);
-    orderRef.transaction(currentData => {
-        if (currentData === null) {
-            return {
-                id: menuId,
-                name: `${item.name}${typeName}`,
-                type: type,
-                price: price,
-                quantity: 1
-            };
-        } else {
-            currentData.quantity += 1;
-            return currentData;
-        }
-    });
-}
+    const existing = orders.find(o => o.id === menuId && o.type === type);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        orders.push({
+            id: menuId,
+            name: `${item.name}${typeName}`,
+            type: type,
+            price: price,
+            quantity: 1
+        });
+    }
 
-function renderOrder() {
-    const tableNumber = document.getElementById('table-number').value.trim();
-    if (!tableNumber) return;
-
-    const orderList = document.getElementById('order-list');
-    const orderTotal = document.getElementById('order-total');
-
-    database.ref(`orders/${tableNumber}`).on('value', snapshot => {
-        const data = snapshot.val();
-        let total = 0;
-        orderList.innerHTML = '';
-
-        if (data) {
-            Object.values(data).forEach(order => {
-                total += order.price * order.quantity;
-                const div = document.createElement('div');
-                div.classList.add('order-item');
-                div.innerHTML = `
-                    <span>${order.name} x ${order.quantity} - Rp${(order.price * order.quantity).toLocaleString()}</span>
-                    <div>
-                        <button onclick="addToOrder(${order.id}, '${order.type}')">+</button>
-                        <button onclick="removeFromOrder(${order.id}, '${order.type}')">-</button>
-                    </div>
-                `;
-                orderList.appendChild(div);
-            });
-        } else {
-            orderList.innerHTML = '<p>Belum ada pesanan.</p>';
-        }
-        orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
-    });
+    renderOrder();
 }
 
 function removeFromOrder(menuId, type) {
-    const tableNumber = document.getElementById('table-number').value.trim();
-    if (!tableNumber) {
-        alert('Masukkan nomor meja terlebih dahulu.');
-        return;
-    }
-
-    const orderRef = database.ref(`orders/${tableNumber}/${menuId}_${type}`);
-    orderRef.transaction(currentData => {
-        if (currentData) {
-            if (currentData.quantity > 1) {
-                currentData.quantity -= 1;
-                return currentData;
-            } else {
-                return null; // menghapus jika qty 0
-            }
+    const index = orders.findIndex(o => o.id === menuId && o.type === type);
+    if (index !== -1) {
+        orders[index].quantity -= 1;
+        if (orders[index].quantity <= 0) {
+            orders.splice(index, 1);
         }
-        return currentData;
+    }
+    renderOrder();
+}
+
+function renderOrder() {
+    const orderList = document.getElementById('order-list');
+    const orderTotal = document.getElementById('order-total');
+    orderList.innerHTML = '';
+
+    let total = 0;
+    orders.forEach(order => {
+        total += order.price * order.quantity;
+        const div = document.createElement('div');
+        div.classList.add('order-item');
+        div.innerHTML = `
+            <span>${order.name} x ${order.quantity} - Rp${(order.price * order.quantity).toLocaleString()}</span>
+            <div>
+                <button onclick="addToOrder(${order.id}, '${order.type}')">+</button>
+                <button onclick="removeFromOrder(${order.id}, '${order.type}')">-</button>
+            </div>
+        `;
+        orderList.appendChild(div);
     });
+
+    orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
 }
 
 function payCash() {
+    console.log("payCash terpanggil");
+
     const tableNumber = document.getElementById('table-number').value.trim();
     if (!tableNumber) {
-        alert('Masukkan nomor meja terlebih dahulu.');
+        alert('Mohon masukkan nomor meja sebelum memesan.');
         return;
     }
 
-    database.ref(`orders/${tableNumber}`).once('value').then(snapshot => {
-        if (snapshot.exists()) {
-            alert(`Pesanan meja ${tableNumber} sudah tercatat. Silakan bayar ke kasir. Terima kasih!`);
-            database.ref(`orders/${tableNumber}`).remove();
-            document.getElementById('order-list').innerHTML = '';
-            document.getElementById('order-total').textContent = 'Total: Rp0';
-            document.getElementById('table-number').value = '';
-        } else {
-            alert('Tidak ada pesanan untuk meja ini.');
-        }
-    });
+    const total = orders.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    if (total === 0) {
+        alert('Tidak ada pesanan untuk dibayar.');
+        return;
+    }
+
+    alert(`Pesanan telah diproses sejumlah Rp${total.toLocaleString()} untuk meja ${tableNumber}. Mohon menunggu. Terima kasih!`);
+    resetOrder();
 }
 
-document.getElementById('table-number').addEventListener('input', renderOrder);
+function resetOrder() {
+    orders = [];
+    renderOrder();
+    document.getElementById('table-number').value = '';
+}
