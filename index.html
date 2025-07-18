@@ -8,71 +8,68 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">Tampa<span>Kopi</span></div>
-        <ul class="nav-links">
-            <li><a href="#menu">Menu</a></li>
-            <li><a href="#order-summary">Pesanan</a></li>
-            <li><a href="#payment">Pembayaran</a></li>
-        </ul>
-    </nav>
+<nav class="navbar">
+    <div class="logo">Tampa<span>Kopi</span></div>
+    <ul class="nav-links">
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#order-summary">Pesanan</a></li>
+        <li><a href="#payment">Pembayaran</a></li>
+    </ul>
+</nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Selamat Datang di Tampa <span>Kopi</span></h1>
-            <p>Minum Kopi spaya tu otak nyeks.</p>
-            <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
+<section class="hero">
+    <div class="hero-content">
+        <h1>Selamat Datang di Tampa <span>Kopi</span></h1>
+        <p>Minum Kopi spaya tu otak nyeks.</p>
+        <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
+    </div>
+</section>
+
+<section id="menu" class="menu-section">
+    <h2>Menu Minuman</h2>
+    <div class="menu-list">
+        <div class="menu-item">
+            <h3>Espresso</h3>
+            <button onclick="addToOrder(1, 'hot')">Panas - Rp15.000</button>
+            <button onclick="addToOrder(1, 'cold')">Dingin - Rp18.000</button>
         </div>
-    </section>
-
-    <section id="menu" class="menu-section">
-        <h2>Menu Minuman</h2>
-        <div class="menu-list">
-            <div class="menu-item">
-                <h3>Espresso</h3>
-                <button onclick="addToOrder(1, 'hot')">Panas - Rp15.000</button>
-                <button onclick="addToOrder(1, 'cold')">Dingin - Rp18.000</button>
-            </div>
-            <div class="menu-item">
-                <h3>Cappuccino</h3>
-                <button onclick="addToOrder(2, 'hot')">Panas - Rp18.000</button>
-                <button onclick="addToOrder(2, 'cold')">Dingin - Rp21.000</button>
-            </div>
-            <div class="menu-item">
-                <h3>Americano</h3>
-                <button onclick="addToOrder(3, 'hot')">Panas - Rp17.000</button>
-                <button onclick="addToOrder(3, 'cold')">Dingin - Rp20.000</button>
-            </div>
+        <div class="menu-item">
+            <h3>Cappuccino</h3>
+            <button onclick="addToOrder(2, 'hot')">Panas - Rp18.000</button>
+            <button onclick="addToOrder(2, 'cold')">Dingin - Rp21.000</button>
         </div>
-    </section>
-
-    <section id="menu-food" class="menu-section">
-        <h2>Menu Makanan</h2>
-        <div class="menu-list">
-            <div class="menu-item">
-                <h3>Nasi Goreng</h3>
-                <button onclick="addToOrder(4, 'normal')">Pesan - Rp25.000</button>
-            </div>
+        <div class="menu-item">
+            <h3>Americano</h3>
+            <button onclick="addToOrder(3, 'hot')">Panas - Rp17.000</button>
+            <button onclick="addToOrder(3, 'cold')">Dingin - Rp20.000</button>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section id="order-summary">
-        <h2>Ringkasan Pesanan</h2>
-        <label>Nomor Meja:
-            <input type="text" id="table-number" placeholder="Contoh: 12" />
-        </label>
-        <div id="order-list"></div>
-        <div id="order-total">Total: Rp0</div>
-    </section>
+<section id="menu-food" class="menu-section">
+    <h2>Menu Makanan</h2>
+    <div class="menu-list">
+        <div class="menu-item">
+            <h3>Nasi Goreng</h3>
+            <button onclick="addToOrder(4, 'normal')">Pesan - Rp25.000</button>
+        </div>
+    </div>
+</section>
 
-    <section id="payment" class="payment-section">
-        <h2>Klik dibawah klo sudah</h2>
-        <button onclick="payCash()">konfirmasi pesanan</button>
-    </section>
+<section id="order-summary">
+    <h2>Ringkasan Pesanan</h2>
+    <label>Nomor Meja:
+        <input type="text" id="table-number" placeholder="Contoh: 12" />
+    </label>
+    <div id="order-list"></div>
+    <div id="order-total">Total: Rp0</div>
+</section>
 
+<section id="payment" class="payment-section">
+    <h2>Klik dibawah klo sudah</h2>
+    <button onclick="payCash()">Konfirmasi Pesanan</button>
+</section>
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-<script src="data.js"></script>
-</body>
-</html>
+<scri
