@@ -1,4 +1,3 @@
-// data.js
 console.log("data.js berhasil terhubung dengan Firebase");
 
 const firebaseConfig = {
@@ -11,6 +10,7 @@ const firebaseConfig = {
     measurementId: "G-Q87CHGRJP8",
     databaseURL: "https://thekop-ko-default-rtdb.firebaseio.com"
 };
+
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
@@ -42,26 +42,24 @@ function addToOrder(menuId, type) {
         typeName = ' Dingin';
     } else if (type === 'normal') {
         price = item.priceHot;
-        typeName = ''; // atau ' Normal' jika mau
+        typeName = '';
     } else {
         price = item.priceHot;
     }
 
     const orderRef = database.ref(`orders/${tableNumber}/${menuId}_${type}`);
-    orderRef.once('value').then(snapshot => {
-        const existing = snapshot.val();
-        if (existing) {
-            orderRef.update({
-                quantity: existing.quantity + 1
-            });
-        } else {
-            orderRef.set({
+    orderRef.transaction(currentData => {
+        if (currentData === null) {
+            return {
                 id: menuId,
                 name: `${item.name}${typeName}`,
                 type: type,
                 price: price,
                 quantity: 1
-            });
+            };
+        } else {
+            currentData.quantity += 1;
+            return currentData;
         }
     });
 }
@@ -102,27 +100,28 @@ function renderOrder() {
 function removeFromOrder(menuId, type) {
     const tableNumber = document.getElementById('table-number').value.trim();
     if (!tableNumber) {
-        alert('Masukkan nomor meja terlebih dahulu');
+        alert('Masukkan nomor meja terlebih dahulu.');
         return;
     }
 
     const orderRef = database.ref(`orders/${tableNumber}/${menuId}_${type}`);
-    orderRef.once('value').then(snapshot => {
-        const existing = snapshot.val();
-        if (existing) {
-            if (existing.quantity > 1) {
-                orderRef.update({ quantity: existing.quantity - 1 });
+    orderRef.transaction(currentData => {
+        if (currentData) {
+            if (currentData.quantity > 1) {
+                currentData.quantity -= 1;
+                return currentData;
             } else {
-                orderRef.remove();
+                return null; // menghapus jika qty 0
             }
         }
+        return currentData;
     });
 }
 
 function payCash() {
     const tableNumber = document.getElementById('table-number').value.trim();
     if (!tableNumber) {
-        alert('Masukkan nomor meja terlebih dahulu');
+        alert('Masukkan nomor meja terlebih dahulu.');
         return;
     }
 
