@@ -1,3 +1,4 @@
+// data.js
 console.log("data.js berhasil terhubung dengan Firebase");
 
 const firebaseConfig = {
@@ -17,7 +18,7 @@ const menu = [
     { id: 1, name: "Espresso", priceHot: 15000, priceCold: 18000 },
     { id: 2, name: "Cappuccino", priceHot: 18000, priceCold: 21000 },
     { id: 3, name: "Americano", priceHot: 17000, priceCold: 20000 },
-    { id: 4, name: "Nasi Goreng", priceHot: 25000 } // makanan
+    { id: 4, name: "Nasi Goreng", priceHot: 25000 }
 ];
 
 function addToOrder(menuId, type) {
@@ -26,7 +27,7 @@ function addToOrder(menuId, type) {
 
     const tableNumber = document.getElementById('table-number').value.trim();
     if (!tableNumber) {
-        alert('Masukkan nomor meja terlebih dahulu.');
+        alert('Mohon masukkan nomor meja terlebih dahulu.');
         return;
     }
 
@@ -39,17 +40,20 @@ function addToOrder(menuId, type) {
     } else if (type === 'cold') {
         price = item.priceCold;
         typeName = ' Dingin';
+    } else if (type === 'normal') {
+        price = item.priceHot;
+        typeName = ''; // atau ' Normal' jika mau
     } else {
         price = item.priceHot;
     }
 
-    const orderKey = `${menuId}_${type}`;
-    const orderRef = database.ref(`orders/${tableNumber}/${orderKey}`);
-
-    orderRef.get().then(snapshot => {
+    const orderRef = database.ref(`orders/${tableNumber}/${menuId}_${type}`);
+    orderRef.once('value').then(snapshot => {
         const existing = snapshot.val();
         if (existing) {
-            orderRef.update({ quantity: existing.quantity + 1 });
+            orderRef.update({
+                quantity: existing.quantity + 1
+            });
         } else {
             orderRef.set({
                 id: menuId,
@@ -69,19 +73,16 @@ function renderOrder() {
     const orderList = document.getElementById('order-list');
     const orderTotal = document.getElementById('order-total');
 
-    const ref = database.ref(`orders/${tableNumber}`);
-    ref.off(); // mencegah listener dobel
-
-    ref.on('value', snapshot => {
+    database.ref(`orders/${tableNumber}`).on('value', snapshot => {
         const data = snapshot.val();
-        orderList.innerHTML = '';
         let total = 0;
+        orderList.innerHTML = '';
 
         if (data) {
             Object.values(data).forEach(order => {
                 total += order.price * order.quantity;
                 const div = document.createElement('div');
-                div.className = 'order-item';
+                div.classList.add('order-item');
                 div.innerHTML = `
                     <span>${order.name} x ${order.quantity} - Rp${(order.price * order.quantity).toLocaleString()}</span>
                     <div>
@@ -91,8 +92,9 @@ function renderOrder() {
                 `;
                 orderList.appendChild(div);
             });
+        } else {
+            orderList.innerHTML = '<p>Belum ada pesanan.</p>';
         }
-
         orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
     });
 }
@@ -100,14 +102,12 @@ function renderOrder() {
 function removeFromOrder(menuId, type) {
     const tableNumber = document.getElementById('table-number').value.trim();
     if (!tableNumber) {
-        alert('Masukkan nomor meja terlebih dahulu.');
+        alert('Masukkan nomor meja terlebih dahulu');
         return;
     }
 
-    const orderKey = `${menuId}_${type}`;
-    const orderRef = database.ref(`orders/${tableNumber}/${orderKey}`);
-
-    orderRef.get().then(snapshot => {
+    const orderRef = database.ref(`orders/${tableNumber}/${menuId}_${type}`);
+    orderRef.once('value').then(snapshot => {
         const existing = snapshot.val();
         if (existing) {
             if (existing.quantity > 1) {
@@ -122,15 +122,14 @@ function removeFromOrder(menuId, type) {
 function payCash() {
     const tableNumber = document.getElementById('table-number').value.trim();
     if (!tableNumber) {
-        alert('Masukkan nomor meja terlebih dahulu.');
+        alert('Masukkan nomor meja terlebih dahulu');
         return;
     }
 
-    const ref = database.ref(`orders/${tableNumber}`);
-    ref.get().then(snapshot => {
+    database.ref(`orders/${tableNumber}`).once('value').then(snapshot => {
         if (snapshot.exists()) {
-            alert(`Pesanan meja ${tableNumber} sudah tercatat.\nSilakan bayar ke kasir.`);
-            ref.remove();
+            alert(`Pesanan meja ${tableNumber} sudah tercatat. Silakan bayar ke kasir. Terima kasih!`);
+            database.ref(`orders/${tableNumber}`).remove();
             document.getElementById('order-list').innerHTML = '';
             document.getElementById('order-total').textContent = 'Total: Rp0';
             document.getElementById('table-number').value = '';
