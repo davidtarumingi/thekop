@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Bajual Kopi</title>
+    <title>TampaKopi</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -73,22 +73,22 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-<script>
-  const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-</script>
 
 <script>
-// Menu mapping
+// ✅ FINAL CONFIG FIREBASE
+const firebaseConfig = {
+    apiKey: "AIzaSyC0l21W7wGJaMyXOXUusWgOwIU09yS9MK4",
+    authDomain: "thekop-ko.firebaseapp.com",
+    databaseURL: "https://thekop-ko-default-rtdb.firebaseio.com",
+    projectId: "thekop-ko",
+    storageBucket: "thekop-ko.appspot.com",
+    messagingSenderId: "258740974913",
+    appId: "1:258740974913:web:c901e8b99f634bf7699dc0"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Menu Items
 let orders = [];
 const menuItems = {
     1: {name: "Espresso Panas", price: 15000},
@@ -137,7 +137,7 @@ function payCash() {
         total: orders.reduce((acc, item) => acc + item.price, 0),
         timestamp: new Date().toISOString()
     };
-    firebase.database().ref("orders").push(orderData)
+    database.ref("orders").push(orderData)
         .then(() => {
             alert("Pesanan berhasil dikirim!");
             orders = [];
