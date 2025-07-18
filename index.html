@@ -3,152 +3,73 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>TampaKopi</title>
+    <title>Jualan Kopi</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="logo">Tampa<span>Kopi</span></div>
-    <ul class="nav-links">
-        <li><a href="#menu">Menu</a></li>
-        <li><a href="#order-summary">Pesanan</a></li>
-        <li><a href="#payment">Pembayaran</a></li>
-    </ul>
-</nav>
+    <nav class="navbar">
+        <div class="logo">Kopi<span>Ku</span></div>
+        <ul class="nav-links">
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#order-summary">Pesanan</a></li>
+            <li><a href="#payment">Pembayaran</a></li>
+        </ul>
+    </nav>
 
-<section class="hero">
-    <div class="hero-content">
-        <h1>Selamat Datang di Tampa <span>Kopi</span></h1>
-        <p>Minum Kopi spaya tu otak nyeks.</p>
-        <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
-    </div>
-</section>
-
-<section id="menu" class="menu-section">
-    <h2>Menu Minuman</h2>
-    <div class="menu-list">
-        <div class="menu-item">
-            <h3>Espresso</h3>
-            <button onclick="addToOrder(1, 'hot')">Panas - Rp15.000</button>
-            <button onclick="addToOrder(1, 'cold')">Dingin - Rp18.000</button>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Selamat Datang di <span>KopiKu</span></h1>
+            <p>Nikmati kopi panas atau dingin dengan harga terjangkau, pesan dengan mudah di meja Anda.</p>
+            <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
         </div>
-        <div class="menu-item">
-            <h3>Cappuccino</h3>
-            <button onclick="addToOrder(2, 'hot')">Panas - Rp18.000</button>
-            <button onclick="addToOrder(2, 'cold')">Dingin - Rp21.000</button>
+    </section>
+
+    <section id="menu" class="menu-section">
+        <h2>Menu Minuman</h2>
+        <div class="menu-list">
+            <div class="menu-item">
+                <h3>Espresso</h3>
+                <button onclick="addToOrder(1, 'hot')">Panas - Rp15.000</button>
+                <button onclick="addToOrder(1, 'cold')">Dingin - Rp18.000</button>
+            </div>
+            <div class="menu-item">
+                <h3>Cappuccino</h3>
+                <button onclick="addToOrder(2, 'hot')">Panas - Rp18.000</button>
+                <button onclick="addToOrder(2, 'cold')">Dingin - Rp21.000</button>
+            </div>
+            <div class="menu-item">
+                <h3>Americano</h3>
+                <button onclick="addToOrder(3, 'hot')">Panas - Rp17.000</button>
+                <button onclick="addToOrder(3, 'cold')">Dingin - Rp20.000</button>
+            </div>
         </div>
-        <div class="menu-item">
-            <h3>Americano</h3>
-            <button onclick="addToOrder(3, 'hot')">Panas - Rp17.000</button>
-            <button onclick="addToOrder(3, 'cold')">Dingin - Rp20.000</button>
+    </section>
+
+    <section id="menu-food" class="menu-section">
+        <h2>Menu Makanan</h2>
+        <div class="menu-list">
+            <div class="menu-item">
+                <h3>Nasi Goreng</h3>
+                <button onclick="addToOrder(4, 'normal')">Pesan - Rp25.000</button>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section id="menu-food" class="menu-section">
-    <h2>Menu Makanan</h2>
-    <div class="menu-list">
-        <div class="menu-item">
-            <h3>Nasi Goreng</h3>
-            <button onclick="addToOrder(4, 'normal')">Pesan - Rp25.000</button>
-        </div>
-    </div>
-</section>
+    <section id="order-summary">
+        <h2>Ringkasan Pesanan</h2>
+        <label>Nomor Meja:
+            <input type="text" id="table-number" placeholder="Contoh: 12" />
+        </label>
+        <div id="order-list"></div>
+        <div id="order-total">Total: Rp0</div>
+    </section>
 
-<section id="order-summary">
-    <h2>Ringkasan Pesanan</h2>
-    <label>Nomor Meja:
-        <input type="text" id="table-number" placeholder="Contoh: 12" />
-    </label>
-    <div id="order-list"></div>
-    <div id="order-total">Total: Rp0</div>
-</section>
+    <section id="payment" class="payment-section">
+        <h2>Klik dibawah klo sudah</h2>
+        <button onclick="payCash()">konfirmasi pesanan</button>
+    </section>
 
-<section id="payment" class="payment-section">
-    <h2>Klik dibawah klo sudah</h2>
-    <button onclick="payCash()">Konfirmasi Pesanan</button>
-</section>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-<script>
-// ✅ FINAL CONFIG FIREBASE
-const firebaseConfig = {
-    apiKey: "AIzaSyC0l21W7wGJaMyXOXUusWgOwIU09yS9MK4",
-    authDomain: "thekop-ko.firebaseapp.com",
-    databaseURL: "https://thekop-ko-default-rtdb.firebaseio.com",
-    projectId: "thekop-ko",
-    storageBucket: "thekop-ko.appspot.com",
-    messagingSenderId: "258740974913",
-    appId: "1:258740974913:web:c901e8b99f634bf7699dc0"
-};
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
-// Menu Items
-let orders = [];
-const menuItems = {
-    1: {name: "Espresso Panas", price: 15000},
-    2: {name: "Cappuccino Panas", price: 18000},
-    3: {name: "Americano Panas", price: 17000},
-    4: {name: "Nasi Goreng", price: 25000},
-};
-
-function addToOrder(id, type) {
-    const item = {...menuItems[id]};
-    if (type === "cold") {
-        item.name = item.name.replace("Panas", "Dingin");
-        item.price += 3000;
-    }
-    orders.push(item);
-    updateOrderSummary();
-}
-
-function updateOrderSummary() {
-    const orderList = document.getElementById("order-list");
-    const orderTotal = document.getElementById("order-total");
-    orderList.innerHTML = "";
-    let total = 0;
-    orders.forEach((order) => {
-        const div = document.createElement("div");
-        div.textContent = `${order.name} - Rp${order.price.toLocaleString()}`;
-        orderList.appendChild(div);
-        total += order.price;
-    });
-    orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
-}
-
-function payCash() {
-    const tableNumber = document.getElementById("table-number").value.trim();
-    if (!tableNumber) {
-        alert("Masukkan nomor meja terlebih dahulu!");
-        return;
-    }
-    if (orders.length === 0) {
-        alert("Belum ada pesanan yang dipilih!");
-        return;
-    }
-    const orderData = {
-        tableNumber,
-        orders,
-        total: orders.reduce((acc, item) => acc + item.price, 0),
-        timestamp: new Date().toISOString()
-    };
-    database.ref("orders").push(orderData)
-        .then(() => {
-            alert("Pesanan berhasil dikirim!");
-            orders = [];
-            updateOrderSummary();
-            document.getElementById("table-number").value = "";
-        })
-        .catch((error) => {
-            alert("Gagal mengirim pesanan: " + error.message);
-        });
-}
-</script>
-
+    <script src="data.js"></script>
 </body>
 </html>
