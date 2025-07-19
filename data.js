@@ -70,7 +70,7 @@ function payCash() {
 
   logDebug("Mengirim pesanan...");
 
-  fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzb3hvO__s79GU_a8Dt3L3c9TJqDGjbLgKBuILB96OreFSnLLs0PO6Se-cNvbfev_RH/exec", {
     method: "POST",
     mode: "no-cors", // penting agar bisa dari HP/browser
     headers: {
