@@ -126,7 +126,7 @@
       const pesanan = order.map((item) => item.name).join(", ");
       const totalHarga = order.reduce((sum, item) => sum + item.price, 0);
 
-      fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbzb3hvO__s79GU_a8Dt3L3c9TJqDGjbLgKBuILB96OreFSnLLs0PO6Se-cNvbfev_RH/exec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nomorMeja, pesanan, totalHarga })
