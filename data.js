@@ -4,7 +4,7 @@ const menu = [
     { id: 1, name: "Espresso", priceHot: 15000, priceCold: 18000 },
     { id: 2, name: "Cappuccino", priceHot: 18000, priceCold: 21000 },
     { id: 3, name: "Americano", priceHot: 17000, priceCold: 20000 },
-    { id: 4, name: "Nasi Goreng", priceHot: 25000 }, // makanan
+    { id: 4, name: "Nasi Goreng", priceHot: 25000 }
 ];
 
 let orders = [];
@@ -34,8 +34,8 @@ function addToOrder(menuId, type) {
         orders.push({
             id: menuId,
             name: `${item.name}${typeName}`,
-            type: type,
-            price: price,
+            type,
+            price,
             quantity: 1
         });
     }
@@ -78,47 +78,39 @@ function renderOrder() {
 }
 
 function payCash() {
-    console.log("payCash terpanggil");
-
     const tableNumber = document.getElementById('table-number').value.trim();
     if (!tableNumber) {
-        alert('Mohon masukkan nomor meja sebelum memesan.');
+        alert('Mohon masukkan nomor meja.');
         return;
     }
 
     if (orders.length === 0) {
-        alert('Tidak ada pesanan untuk dibayar.');
+        alert('Belum ada pesanan.');
         return;
     }
 
-    const orderSummary = orders.map(item => `${item.name} x ${item.quantity}`).join(', ');
     const total = orders.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-    // Ganti URL ini dengan URL Web App kamu
-    const webAppURL = "https://script.google.com/macros/s/AKfycbwPgJoDvgI2gphvAXvkhKXnpbH6aDME6RyAmGKlW9H1-SavsLnnPbYsAUmDxAbnA0Jq/exec";
+    const pesananText = orders.map(item => `${item.name} x${item.quantity}`).join(', ');
 
     const data = {
-        meja: tableNumber,
-        pesanan: orderSummary,
-        total: total
+        nomorMeja: tableNumber,
+        pesanan: pesananText,
+        totalHarga: total
     };
 
-    fetch(webAppURL, {
+    fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
         method: 'POST',
-        body: JSON.stringify(data),
+        mode: 'no-cors',
         headers: {
             'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.text())
-    .then(result => {
-        console.log('Success:', result);
-        alert(`Pesanan telah dikirim ke dapur.\nTotal: Rp${total.toLocaleString()}\nMeja: ${tableNumber}`);
+        },
+        body: JSON.stringify(data)
+    }).then(() => {
+        alert(`Pesanan untuk meja ${tableNumber} berhasil dikirim. Total: Rp${total.toLocaleString()}`);
         resetOrder();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan saat mengirim pesanan.');
+    }).catch((error) => {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan saat mengirim pesanan.");
     });
 }
 
