@@ -1,110 +1,168 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Jualan Kopi</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jualan Kopi</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">Kopi<span>Ku</span></div>
-        <ul class="nav-links">
-            <li><a href="#menu">Menu</a></li>
-            <li><a href="#order-summary">Pesanan</a></li>
-            <li><a href="#payment">Pembayaran</a></li>
-        </ul>
-    </nav>
+  <nav class="navbar">
+    <div class="logo">Kopi<span>Ku</span></div>
+    <ul class="nav-links">
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#order-summary">Pesanan</a></li>
+      <li><a href="#payment">Pembayaran</a></li>
+    </ul>
+  </nav>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Selamat Datang di <span>KopiKu</span></h1>
-            <p>Nikmati kopi panas atau dingin dengan harga terjangkau, pesan dengan mudah di meja Anda.</p>
-            <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
-        </div>
-    </section>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Selamat Datang di <span>KopiKu</span></h1>
+      <p>Nikmati kopi panas atau dingin dengan harga terjangkau, pesan dengan mudah di meja Anda.</p>
+      <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Pesan Sekarang</button>
+    </div>
+  </section>
 
-    <section id="menu" class="menu-section">
-        <h2>Menu Minuman</h2>
-        <div class="menu-list">
-            <div class="menu-item">
-                <h3>Espresso</h3>
-                <button onclick="addToOrder(1, 'hot')">Panas - Rp15.000</button>
-                <button onclick="addToOrder(1, 'cold')">Dingin - Rp18.000</button>
-            </div>
-            <div class="menu-item">
-                <h3>Cappuccino</h3>
-                <button onclick="addToOrder(2, 'hot')">Panas - Rp18.000</button>
-                <button onclick="addToOrder(2, 'cold')">Dingin - Rp21.000</button>
-            </div>
-            <div class="menu-item">
-                <h3>Americano</h3>
-                <button onclick="addToOrder(3, 'hot')">Panas - Rp17.000</button>
-                <button onclick="addToOrder(3, 'cold')">Dingin - Rp20.000</button>
-            </div>
-        </div>
-    </section>
+  <section id="menu" class="menu-section">
+    <h2>Menu Minuman</h2>
+    <div class="menu-list">
+      <div class="menu-item">
+        <h3>Espresso</h3>
+        <button onclick="addToOrder(1, 'hot')">Panas - Rp15.000</button>
+        <button onclick="addToOrder(1, 'cold')">Dingin - Rp18.000</button>
+      </div>
+      <div class="menu-item">
+        <h3>Cappuccino</h3>
+        <button onclick="addToOrder(2, 'hot')">Panas - Rp18.000</button>
+        <button onclick="addToOrder(2, 'cold')">Dingin - Rp21.000</button>
+      </div>
+      <div class="menu-item">
+        <h3>Americano</h3>
+        <button onclick="addToOrder(3, 'hot')">Panas - Rp17.000</button>
+        <button onclick="addToOrder(3, 'cold')">Dingin - Rp20.000</button>
+      </div>
+    </div>
+  </section>
 
-    <section id="menu-food" class="menu-section">
-        <h2>Menu Makanan</h2>
-        <div class="menu-list">
-            <div class="menu-item">
-                <h3>Nasi Goreng</h3>
-                <button onclick="addToOrder(4, 'normal')">Pesan - Rp25.000</button>
-            </div>
-        </div>
-    </section>
+  <section id="menu-food" class="menu-section">
+    <h2>Menu Makanan</h2>
+    <div class="menu-list">
+      <div class="menu-item">
+        <h3>Nasi Goreng</h3>
+        <button onclick="addToOrder(4, 'normal')">Pesan - Rp25.000</button>
+      </div>
+    </div>
+  </section>
 
-    <section id="order-summary">
-        <h2>Ringkasan Pesanan</h2>
-        <label>Nomor Meja:
-            <input type="text" id="table-number" placeholder="Contoh: 12" />
-        </label>
-        <div id="order-list"></div>
-        <div id="order-total">Total: Rp0</div>
-    </section>
+  <section id="order-summary">
+    <h2>Ringkasan Pesanan</h2>
+    <label>Nomor Meja:
+      <input type="text" id="table-number" placeholder="Contoh: 12" />
+    </label>
+    <div id="order-list"></div>
+    <div id="order-total">Total: Rp0</div>
+  </section>
 
-    <section id="payment" class="payment-section">
-        <h2>Klik dibawah klo sudah</h2>
-        <button onclick="payCash()">Konfirmasi Pesanan</button>
-    </section>
+  <section id="payment" class="payment-section">
+    <h2>Klik dibawah klo sudah</h2>
+    <button onclick="payCash()">Konfirmasi Pesanan</button>
+  </section>
 
-    <!-- 🔧 DEBUG PANEL -->
-    <section id="debug-panel" style="padding: 1rem; background-color: #f3f3f3; margin: 2rem 0;">
-        <h3>Debug Panel (Tes Kirim Manual)</h3>
-        <button onclick="testSendDebug()">Tes Kirim Manual</button>
-        <pre id="debug-output" style="white-space: pre-wrap; background: #eee; padding: 1rem;"></pre>
-    </section>
+  <!-- 🔧 DEBUG PANEL -->
+  <section id="debug-panel" style="padding: 1rem; background-color: #f3f3f3; margin: 2rem 0;">
+    <h3>Debug Panel (Tes Kirim Manual)</h3>
+    <button onclick="testSendDebug()">Tes Kirim Manual</button>
+    <pre id="debug-output" style="white-space: pre-wrap; background: #eee; padding: 1rem;"></pre>
+  </section>
 
-    <!-- Script asli -->
-    <script src="data.js"></script>
+  <!-- JS Logic (pindah dari data.js ke inline biar gampang debug) -->
+  <script>
+    const menuItems = {
+      1: { name: "Espresso Panas", price: 15000 },
+      2: { name: "Cappuccino Panas", price: 18000 },
+      3: { name: "Americano Panas", price: 17000 },
+      4: { name: "Nasi Goreng", price: 25000 },
+      '1-cold': { name: "Espresso Dingin", price: 18000 },
+      '2-cold': { name: "Cappuccino Dingin", price: 21000 },
+      '3-cold': { name: "Americano Dingin", price: 20000 }
+    };
 
-    <!-- Script Debug -->
-    <script>
-        function testSendDebug() {
-            const nomorMeja = document.getElementById("table-number").value || "DEBUG";
-            const pesanan = order.map(item => item.name).join(", ") || "Contoh Pesanan";
-            const totalHarga = order.reduce((sum, item) => sum + item.price, 0) || 9999;
+    let order = [];
 
-            const output = document.getElementById("debug-output");
+    function addToOrder(id, type) {
+      let key = id;
+      if (type === 'cold') key = `${id}-cold`;
+      const item = menuItems[key];
+      if (item) {
+        order.push(item);
+        updateOrderSummary();
+      }
+    }
 
-            fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ nomorMeja, pesanan, totalHarga })
-            })
-            .then(res => res.text())
-            .then(data => {
-                output.textContent = `✅ Berhasil:\n${data}`;
-            })
-            .catch(err => {
-                output.textContent = `❌ Gagal:\n${err.message}`;
-                console.error("DEBUG error:", err);
-            });
-        }
-    </script>
+    function updateOrderSummary() {
+      const orderList = document.getElementById("order-list");
+      const orderTotal = document.getElementById("order-total");
+
+      orderList.innerHTML = "";
+      let total = 0;
+
+      order.forEach((item) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.textContent = `${item.name} - Rp${item.price.toLocaleString()}`;
+        orderList.appendChild(itemDiv);
+        total += item.price;
+      });
+
+      orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
+    }
+
+    function payCash() {
+      const nomorMeja = document.getElementById("table-number").value.trim();
+      if (!nomorMeja) return alert("Masukkan nomor meja terlebih dahulu.");
+      if (order.length === 0) return alert("Pesanan masih kosong.");
+
+      const pesanan = order.map((item) => item.name).join(", ");
+      const totalHarga = order.reduce((sum, item) => sum + item.price, 0);
+
+      fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nomorMeja, pesanan, totalHarga })
+      })
+      .then(res => res.text())
+      .then(data => {
+        alert(data);
+        order = [];
+        updateOrderSummary();
+        document.getElementById("table-number").value = "";
+      })
+      .catch(err => {
+        console.error("Gagal kirim:", err);
+        alert("Gagal mengirim pesanan. Pastikan koneksi internet stabil.");
+      });
+    }
+
+    function testSendDebug() {
+      const nomorMeja = document.getElementById("table-number").value || "DEBUG";
+      const pesanan = order.length ? order.map(item => item.name).join(", ") : "Contoh Pesanan";
+      const totalHarga = order.length ? order.reduce((sum, item) => sum + item.price, 0) : 9999;
+
+      const output = document.getElementById("debug-output");
+
+      fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nomorMeja, pesanan, totalHarga })
+      })
+      .then(res => res.text())
+      .then(data => output.textContent = `✅ Berhasil:\n${data}`)
+      .catch(err => {
+        output.textContent = `❌ Gagal:\n${err.message}`;
+        console.error("DEBUG error:", err);
+      });
+    }
+  </script>
 </body>
 </html>
