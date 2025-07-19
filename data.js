@@ -1,121 +1,78 @@
-console.log("data.js berhasil terhubung");
+const menuItems = {
+  1: { name: "Espresso Panas", price: 15000 },
+  2: { name: "Cappuccino Panas", price: 18000 },
+  3: { name: "Americano Panas", price: 17000 },
+  4: { name: "Nasi Goreng", price: 25000 },
+  '1-cold': { name: "Espresso Dingin", price: 18000 },
+  '2-cold': { name: "Cappuccino Dingin", price: 21000 },
+  '3-cold': { name: "Americano Dingin", price: 20000 }
+};
 
-const menu = [
-    { id: 1, name: "Espresso", priceHot: 15000, priceCold: 18000 },
-    { id: 2, name: "Cappuccino", priceHot: 18000, priceCold: 21000 },
-    { id: 3, name: "Americano", priceHot: 17000, priceCold: 20000 },
-    { id: 4, name: "Nasi Goreng", priceHot: 25000 }
-];
+let order = [];
 
-let orders = [];
+function addToOrder(id, type) {
+  let key = id;
+  if (type === 'cold') key = `${id}-cold`;
 
-function addToOrder(menuId, type) {
-    const item = menu.find(m => m.id === menuId);
-    if (!item) return;
-
-    let price = 0;
-    let typeName = '';
-
-    if (type === 'hot') {
-        price = item.priceHot;
-        typeName = ' Panas';
-    } else if (type === 'cold') {
-        price = item.priceCold;
-        typeName = ' Dingin';
-    } else {
-        price = item.priceHot;
-        typeName = '';
-    }
-
-    const existing = orders.find(o => o.id === menuId && o.type === type);
-    if (existing) {
-        existing.quantity += 1;
-    } else {
-        orders.push({
-            id: menuId,
-            name: `${item.name}${typeName}`,
-            type,
-            price,
-            quantity: 1
-        });
-    }
-
-    renderOrder();
+  const item = menuItems[key];
+  if (item) {
+    order.push(item);
+    updateOrderSummary();
+  }
 }
 
-function removeFromOrder(menuId, type) {
-    const index = orders.findIndex(o => o.id === menuId && o.type === type);
-    if (index !== -1) {
-        orders[index].quantity -= 1;
-        if (orders[index].quantity <= 0) {
-            orders.splice(index, 1);
-        }
-    }
-    renderOrder();
-}
+function updateOrderSummary() {
+  const orderList = document.getElementById("order-list");
+  const orderTotal = document.getElementById("order-total");
 
-function renderOrder() {
-    const orderList = document.getElementById('order-list');
-    const orderTotal = document.getElementById('order-total');
-    orderList.innerHTML = '';
+  orderList.innerHTML = "";
+  let total = 0;
 
-    let total = 0;
-    orders.forEach(order => {
-        total += order.price * order.quantity;
-        const div = document.createElement('div');
-        div.classList.add('order-item');
-        div.innerHTML = `
-            <span>${order.name} x ${order.quantity} - Rp${(order.price * order.quantity).toLocaleString()}</span>
-            <div>
-                <button onclick="addToOrder(${order.id}, '${order.type}')">+</button>
-                <button onclick="removeFromOrder(${order.id}, '${order.type}')">-</button>
-            </div>
-        `;
-        orderList.appendChild(div);
-    });
+  order.forEach((item) => {
+    const itemDiv = document.createElement("div");
+    itemDiv.textContent = `${item.name} - Rp${item.price.toLocaleString()}`;
+    orderList.appendChild(itemDiv);
+    total += item.price;
+  });
 
-    orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
+  orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
 }
 
 function payCash() {
-    const tableNumber = document.getElementById('table-number').value.trim();
-    if (!tableNumber) {
-        alert('Mohon masukkan nomor meja.');
-        return;
-    }
+  const nomorMeja = document.getElementById("table-number").value;
+  if (!nomorMeja) {
+    alert("Masukkan nomor meja terlebih dahulu.");
+    return;
+  }
 
-    if (orders.length === 0) {
-        alert('Belum ada pesanan.');
-        return;
-    }
+  if (order.length === 0) {
+    alert("Pesanan masih kosong.");
+    return;
+  }
 
-    const total = orders.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const pesananText = orders.map(item => `${item.name} x${item.quantity}`).join(', ');
+  const pesanan = order.map((item) => item.name).join(", ");
+  const totalHarga = order.reduce((sum, item) => sum + item.price, 0);
 
-    const data = {
-        nomorMeja: tableNumber,
-        pesanan: pesananText,
-        totalHarga: total
-    };
-
-    fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    }).then(() => {
-        alert(`Pesanan untuk meja ${tableNumber} berhasil dikirim. Total: Rp${total.toLocaleString()}`);
-        resetOrder();
-    }).catch((error) => {
-        console.error("Error:", error);
-        alert("Terjadi kesalahan saat mengirim pesanan.");
+  fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      nomorMeja,
+      pesanan,
+      totalHarga
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.text())
+    .then((data) => {
+      alert(data); // "Data berhasil dikirim"
+      order = [];
+      updateOrderSummary();
+      document.getElementById("table-number").value = "";
+    })
+    .catch((err) => {
+      console.error("Gagal kirim:", err);
+      alert("Gagal mengirim pesanan. Coba lagi.");
     });
-}
-
-function resetOrder() {
-    orders = [];
-    renderOrder();
-    document.getElementById('table-number').value = '';
 }
