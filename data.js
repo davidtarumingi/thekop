@@ -1,12 +1,10 @@
 console.log("data.js berhasil terhubung");
 
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPgJoDvgI2gphvAXvkhKXnpbH6aDME6RyAmGKlW9H1-SavsLnnPbYsAUmDxAbnA0Jq/exec";
-
 const menu = [
     { id: 1, name: "Espresso", priceHot: 15000, priceCold: 18000 },
     { id: 2, name: "Cappuccino", priceHot: 18000, priceCold: 21000 },
     { id: 3, name: "Americano", priceHot: 17000, priceCold: 20000 },
-    { id: 4, name: "Nasi Goreng", priceHot: 25000 },
+    { id: 4, name: "Nasi Goreng", priceHot: 25000 }, // makanan
 ];
 
 let orders = [];
@@ -88,36 +86,37 @@ function payCash() {
         return;
     }
 
-    const total = orders.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    if (total === 0) {
+    if (orders.length === 0) {
         alert('Tidak ada pesanan untuk dibayar.');
         return;
     }
 
-    // Format pesanan jadi string
-    const orderDetails = orders.map(o => `${o.name} x${o.quantity}`).join(', ');
+    const total = orders.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const orderText = orders.map(item => `${item.name} x ${item.quantity}`).join(', ');
 
     // Kirim ke Google Sheets
-    fetch(WEB_APP_URL, {
-        method: "POST",
+    fetch('https://script.google.com/macros/s/AKfycbwPgJoDvgI2gphvAXvkhKXnpbH6aDME6RyAmGKlW9H1-SavsLnnPbYsAUmDxAbnA0Jq/exec', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             meja: tableNumber,
-            pesanan: orderDetails,
+            pesanan: orderText,
             total: total
         })
     })
-    .then(res => res.text())
-    .then(res => {
-        console.log("Response dari Web App:", res);
-        alert(`Pesanan dikirim! Total Rp${total.toLocaleString()} untuk meja ${tableNumber}.`);
-        resetOrder();
+    .then(response => {
+        if (response.ok) {
+            alert(`Pesanan telah dikirim! Total: Rp${total.toLocaleString()} untuk meja ${tableNumber}`);
+            resetOrder();
+        } else {
+            alert('Gagal mengirim pesanan. Coba lagi.');
+        }
     })
-    .catch(err => {
-        console.error("Error saat mengirim pesanan:", err);
-        alert("Gagal mengirim pesanan. Coba lagi.");
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengirim pesanan.');
     });
 }
 
