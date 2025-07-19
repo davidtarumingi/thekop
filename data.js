@@ -91,28 +91,30 @@ function payCash() {
         return;
     }
 
+    const orderSummary = orders.map(item => `${item.name} x ${item.quantity}`).join(', ');
     const total = orders.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const orderText = orders.map(item => `${item.name} x ${item.quantity}`).join(', ');
 
-    // Kirim ke Google Sheets
-    fetch('https://script.google.com/macros/s/AKfycbwPgJoDvgI2gphvAXvkhKXnpbH6aDME6RyAmGKlW9H1-SavsLnnPbYsAUmDxAbnA0Jq/exec', {
+    // Ganti URL ini dengan URL Web App kamu
+    const webAppURL = "https://script.google.com/macros/s/AKfycbwPgJoDvgI2gphvAXvkhKXnpbH6aDME6RyAmGKlW9H1-SavsLnnPbYsAUmDxAbnA0Jq/exec";
+
+    const data = {
+        meja: tableNumber,
+        pesanan: orderSummary,
+        total: total
+    };
+
+    fetch(webAppURL, {
         method: 'POST',
+        body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            meja: tableNumber,
-            pesanan: orderText,
-            total: total
-        })
-    })
-    .then(response => {
-        if (response.ok) {
-            alert(`Pesanan telah dikirim! Total: Rp${total.toLocaleString()} untuk meja ${tableNumber}`);
-            resetOrder();
-        } else {
-            alert('Gagal mengirim pesanan. Coba lagi.');
         }
+    })
+    .then(response => response.text())
+    .then(result => {
+        console.log('Success:', result);
+        alert(`Pesanan telah dikirim ke dapur.\nTotal: Rp${total.toLocaleString()}\nMeja: ${tableNumber}`);
+        resetOrder();
     })
     .catch(error => {
         console.error('Error:', error);
