@@ -70,7 +70,41 @@
         <button onclick="payCash()">Konfirmasi Pesanan</button>
     </section>
 
-    <!-- Hubungkan ke file JS yang sudah diperbarui -->
+    <!-- 🔧 DEBUG PANEL -->
+    <section id="debug-panel" style="padding: 1rem; background-color: #f3f3f3; margin: 2rem 0;">
+        <h3>Debug Panel (Tes Kirim Manual)</h3>
+        <button onclick="testSendDebug()">Tes Kirim Manual</button>
+        <pre id="debug-output" style="white-space: pre-wrap; background: #eee; padding: 1rem;"></pre>
+    </section>
+
+    <!-- Script asli -->
     <script src="data.js"></script>
+
+    <!-- Script Debug -->
+    <script>
+        function testSendDebug() {
+            const nomorMeja = document.getElementById("table-number").value || "DEBUG";
+            const pesanan = order.map(item => item.name).join(", ") || "Contoh Pesanan";
+            const totalHarga = order.reduce((sum, item) => sum + item.price, 0) || 9999;
+
+            const output = document.getElementById("debug-output");
+
+            fetch("https://script.google.com/macros/s/AKfycbx2_ZpOPRPiYQ5UqZXqateCpEkhklNfgt6FHQg8RBQsTBu_jshN7GgXBsTeDYcMHJY/exec", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nomorMeja, pesanan, totalHarga })
+            })
+            .then(res => res.text())
+            .then(data => {
+                output.textContent = `✅ Berhasil:\n${data}`;
+            })
+            .catch(err => {
+                output.textContent = `❌ Gagal:\n${err.message}`;
+                console.error("DEBUG error:", err);
+            });
+        }
+    </script>
 </body>
 </html>
