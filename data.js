@@ -1,11 +1,12 @@
-// data.js
 console.log("data.js berhasil terhubung");
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPgJoDvgI2gphvAXvkhKXnpbH6aDME6RyAmGKlW9H1-SavsLnnPbYsAUmDxAbnA0Jq/exec";
 
 const menu = [
     { id: 1, name: "Espresso", priceHot: 15000, priceCold: 18000 },
     { id: 2, name: "Cappuccino", priceHot: 18000, priceCold: 21000 },
     { id: 3, name: "Americano", priceHot: 17000, priceCold: 20000 },
-    { id: 4, name: "Nasi Goreng", priceHot: 25000 }, // makanan
+    { id: 4, name: "Nasi Goreng", priceHot: 25000 },
 ];
 
 let orders = [];
@@ -23,7 +24,7 @@ function addToOrder(menuId, type) {
     } else if (type === 'cold') {
         price = item.priceCold;
         typeName = ' Dingin';
-    } else { // untuk makanan
+    } else {
         price = item.priceHot;
         typeName = '';
     }
@@ -93,8 +94,31 @@ function payCash() {
         return;
     }
 
-    alert(`Pesanan telah diproses sejumlah Rp${total.toLocaleString()} untuk meja ${tableNumber}. Mohon menunggu. Terima kasih!`);
-    resetOrder();
+    // Format pesanan jadi string
+    const orderDetails = orders.map(o => `${o.name} x${o.quantity}`).join(', ');
+
+    // Kirim ke Google Sheets
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            meja: tableNumber,
+            pesanan: orderDetails,
+            total: total
+        })
+    })
+    .then(res => res.text())
+    .then(res => {
+        console.log("Response dari Web App:", res);
+        alert(`Pesanan dikirim! Total Rp${total.toLocaleString()} untuk meja ${tableNumber}.`);
+        resetOrder();
+    })
+    .catch(err => {
+        console.error("Error saat mengirim pesanan:", err);
+        alert("Gagal mengirim pesanan. Coba lagi.");
+    });
 }
 
 function resetOrder() {
