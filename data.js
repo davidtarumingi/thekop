@@ -38,15 +38,6 @@ function updateOrderSummary() {
   orderTotal.textContent = `Total: Rp${total.toLocaleString()}`;
 }
 
-function logDebug(message) {
-  const debugDiv = document.getElementById("debug-log");
-  if (debugDiv) {
-    const entry = document.createElement("div");
-    entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-    debugDiv.prepend(entry);
-  }
-}
-
 function payCash() {
   const nomorMeja = document.getElementById("table-number").value;
   if (!nomorMeja) {
@@ -62,17 +53,11 @@ function payCash() {
   const pesanan = order.map((item) => item.name).join(", ");
   const totalHarga = order.reduce((sum, item) => sum + item.price, 0);
 
-  const data = {
-    nomorMeja,
-    pesanan,
-    totalHarga
-  };
-
-  logDebug("Mengirim pesanan...");
+  const data = { nomorMeja, pesanan, totalHarga };
 
   fetch("https://script.google.com/macros/s/AKfycbzb3hvO__s79GU_a8Dt3L3c9TJqDGjbLgKBuILB96OreFSnLLs0PO6Se-cNvbfev_RH/exec", {
     method: "POST",
-    mode: "no-cors", // penting agar bisa dari HP/browser
+    mode: "no-cors",
     headers: {
       "Content-Type": "application/json",
     },
@@ -80,14 +65,12 @@ function payCash() {
   })
     .then(() => {
       alert("Pesanan berhasil dikirim!");
-      logDebug("Berhasil kirim ke Google Sheets (mode: no-cors).");
       order = [];
       updateOrderSummary();
       document.getElementById("table-number").value = "";
     })
     .catch((err) => {
       console.error("Gagal kirim:", err);
-      logDebug("Gagal kirim: " + err.message);
       alert("Gagal mengirim pesanan. Coba lagi.");
     });
 }
