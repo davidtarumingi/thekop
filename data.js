@@ -55,7 +55,7 @@ function payCash() {
 
   const data = { nomorMeja, pesanan, totalHarga };
 
-  fetch("https://script.google.com/macros/s/AKfycbzb3hvO__s79GU_a8Dt3L3c9TJqDGjbLgKBuILB96OreFSnLLs0PO6Se-cNvbfev_RH/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyY2yc_0fyEu4SF8mPH14kYXZDrOzN4OeOj9Qng8VDE2zaG-z1g5Gin9tJqREB4Lvyr/exec", {
     method: "POST",
     mode: "no-cors",
     headers: {
